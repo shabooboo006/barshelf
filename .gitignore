@@ -22,3 +22,18 @@ xcuserdata/
 *.dmg
 *.pkg
 *.zip
+
+# Secrets & Apple signing material — NEVER commit (rotate immediately if leaked)
+.env
+.env.*
+*.p8
+*.p12
+*.cer
+*.pem
+*.certSigningRequest
+*.mobileprovision
+*.keychain
+*.keychain-db
+AuthKey_*.p8
+id_rsa*
+secrets/
