@@ -14,6 +14,7 @@ final class AppController: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "Spike: Hide First Foreign Item", action: #selector(hideFirst), keyEquivalent: "")
         menu.addItem(withTitle: "Spike: Restore Hidden Item", action: #selector(restoreHidden), keyEquivalent: "")
         menu.addItem(withTitle: "Spike: Full Round-Trip (restore→click→re-hide)", action: #selector(roundTrip), keyEquivalent: "")
+        menu.addItem(withTitle: "Spike: Stress x20 (hide+roundtrip loop)", action: #selector(stress), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         statusItem.menu = menu
@@ -25,4 +26,17 @@ final class AppController: NSObject, NSApplicationDelegate {
     @objc func hideFirst() { RoundTrip.shared.hideFirstForeignItem() }
     @objc func restoreHidden() { RoundTrip.shared.restoreHidden() }
     @objc func roundTrip() { RoundTrip.shared.fullRoundTrip() }
+
+    @objc func stress() {
+        Task { @MainActor in
+            for n in 1...20 {
+                Log.line("stress cycle \(n)")
+                RoundTrip.shared.hideFirstForeignItem()
+                try? await Task.sleep(for: .milliseconds(400))
+                RoundTrip.shared.restoreHidden()
+                try? await Task.sleep(for: .milliseconds(400))
+            }
+            Log.line("stress done: 20 cycles survived")
+        }
+    }
 }
