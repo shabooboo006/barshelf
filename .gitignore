@@ -23,6 +23,9 @@ xcuserdata/
 *.pkg
 *.zip
 
+# Dev worktrees (isolated workspaces, never committed)
+.worktrees/
+
 # Secrets & Apple signing material — NEVER commit (rotate immediately if leaked)
 .env
 .env.*
