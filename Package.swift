@@ -13,6 +13,7 @@ let package = Package(
             name: "BarShelf",
             dependencies: ["BarShelfCore", "BarShelfBackend", "BarShelfUIKit"],
             exclude: ["Info.plist"],
+            resources: [.copy("Resources")],
             // unsafeFlags is acceptable here: BarShelf is a top-level executable, never consumed as a package dependency (where unsafeFlags would be rejected).
             linkerSettings: [
                 // Embed Info.plist (LSUIElement agent) into the binary's

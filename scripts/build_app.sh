@@ -12,6 +12,7 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp ".build/arm64-apple-macosx/release/BarShelf" "$APP/Contents/MacOS/BarShelf"
 cp "Sources/BarShelf/Info.plist" "$APP/Contents/Info.plist"
 printf 'APPL????' > "$APP/Contents/PkgInfo"
+cp "Sources/BarShelf/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
 codesign --force --options runtime --timestamp \
   --sign "$IDENTITY" "$APP"
