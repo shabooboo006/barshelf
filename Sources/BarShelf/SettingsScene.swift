@@ -4,8 +4,8 @@
 // app name, and a 3-state segmented Picker for each row. Footer: launch-at-login
 // toggle + quit button.
 //
-// Bundle.module glyph note: state-glyph PNGs (StateAlwaysVisible, StateShelved,
-// StateShowWhenActive) in Resources/ are loaded via Bundle.module. If lookup fails
+// Bundle.barshelfResources glyph note: state-glyph PNGs (StateAlwaysVisible, StateShelved,
+// StateShowWhenActive) in Resources/ are loaded via Bundle.barshelfResources. If lookup fails
 // at runtime the SF Symbol fallbacks ("eye", "archivebox", "app.badge") are used.
 
 import SwiftUI
@@ -152,9 +152,9 @@ private struct SettingsRow: View {
     }
 
     private func glyphOrSymbol(resourceName: String, systemName: String, label: String) -> some View {
-        // Bundle.module holds resources from Sources/BarShelf/Resources/ (via .copy("Resources")).
+        // Bundle.barshelfResources holds resources from Sources/BarShelf/Resources/ (via .copy("Resources")).
         // The PNG is at Resources/<name>.png inside the bundle.
-        let resourceURL = Bundle.module.url(
+        let resourceURL = Bundle.barshelfResources.url(
             forResource: "Resources/\(resourceName)",
             withExtension: "png"
         )

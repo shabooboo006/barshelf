@@ -135,7 +135,7 @@ final class AppController: NSObject, NSApplicationDelegate {
     /// Applies the collapsed or expanded template image, falling back to a text title.
     private func applyStatusIcon(collapsed: Bool) {
         let resourceName = collapsed ? "Resources/BarShelfCollapsedTemplate" : "Resources/BarShelfExpandedTemplate"
-        if let url = Bundle.module.url(forResource: resourceName, withExtension: "png"),
+        if let url = Bundle.barshelfResources.url(forResource: resourceName, withExtension: "png"),
            let img = NSImage(contentsOf: url) {
             img.isTemplate = true
             statusItem.button?.image = img
