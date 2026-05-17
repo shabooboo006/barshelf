@@ -37,9 +37,12 @@ final class MenuBarScan {
 
     func logAll() {
         let items = scan()
-        Log.line("found \(items.count) foreign status items:")
+        Log.line("扫描到 \(items.count) 个外部菜单栏图标：")
         for it in items {
-            Log.line("  win=\(it.windowNumber) pid=\(it.ownerPID) \(it.ownerName) bounds=\(it.bounds)")
+            Log.line("  窗口=\(it.windowNumber) pid=\(it.ownerPID) \(it.ownerName) 边界=\(it.bounds)")
+        }
+        if items.isEmpty {
+            Log.line("⚠️ 扫描结果为空。通常意味着「屏幕录制」未授权 —— 请先完成 ① 中的屏幕录制授权并重启本 App。")
         }
     }
 }

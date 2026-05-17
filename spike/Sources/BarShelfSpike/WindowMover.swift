@@ -9,7 +9,7 @@ enum WindowMover {
         let cid = SLSMainConnectionID()
         var r = CGRect.zero
         let err = SLSGetWindowBounds(cid, wid, &r)
-        if err != .success { Log.line("SLSGetWindowBounds err=\(err.rawValue)"); return nil }
+        if err != .success { Log.line("SLSGetWindowBounds 错误=\(err.rawValue)"); return nil }
         return r
     }
 
@@ -18,7 +18,7 @@ enum WindowMover {
         let cid = SLSMainConnectionID()
         var p = point
         let err = SLSMoveWindow(cid, wid, &p)
-        Log.line("SLSMoveWindow win=\(wid) -> \(point) err=\(err.rawValue)")
+        Log.line("SLSMoveWindow 窗口=\(wid) -> \(point) 错误码=\(err.rawValue)")
         return err == .success
     }
 
@@ -26,7 +26,7 @@ enum WindowMover {
     static func setFrame(_ wid: UInt32, _ frame: CGRect) -> Bool {
         let cid = SLSMainConnectionID()
         let err = SLSSetWindowFrame(cid, wid, frame)
-        Log.line("SLSSetWindowFrame win=\(wid) -> \(frame) err=\(err.rawValue)")
+        Log.line("SLSSetWindowFrame 窗口=\(wid) -> \(frame) 错误码=\(err.rawValue)")
         return err == .success
     }
 }
