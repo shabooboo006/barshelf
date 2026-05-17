@@ -26,6 +26,15 @@ xcuserdata/
 # Dev worktrees (isolated workspaces, never committed)
 .worktrees/
 
+# Image-gen session scratch (codex-image-gen: raw generations, prompts,
+# gallery server, process scripts) — working scratch, never published
+codex-image-runs/
+
+# Product art produced pre-scaffold. Canonical copies live on disk and are
+# documented in assets/README.md. Plan 2 (V0 project scaffold) un-ignores
+# this and commits it WITH the app target; main stays pristine until then.
+assets/
+
 # Secrets & Apple signing material — NEVER commit (rotate immediately if leaked)
 .env
 .env.*
