@@ -18,6 +18,9 @@ xcuserdata/
 .build/
 .swiftpm/
 
+# Assembled .app build output from scripts/build_app.sh — artifact, never committed
+dist/
+
 # Release artifacts — published to GitHub Releases, never committed
 *.dmg
 *.pkg
