@@ -8,9 +8,10 @@ let package = Package(
         .target(name: "BarShelfCore"),
         .target(name: "BarShelfCoreTestSupport", dependencies: ["BarShelfCore"]),
         .target(name: "BarShelfBackend", dependencies: ["BarShelfCore"]),
+        .target(name: "BarShelfUIKit", dependencies: ["BarShelfCore"]),
         .executableTarget(
             name: "BarShelf",
-            dependencies: ["BarShelfCore", "BarShelfBackend"],
+            dependencies: ["BarShelfCore", "BarShelfBackend", "BarShelfUIKit"],
             exclude: ["Info.plist"],
             // unsafeFlags is acceptable here: BarShelf is a top-level executable, never consumed as a package dependency (where unsafeFlags would be rejected).
             linkerSettings: [
@@ -27,5 +28,6 @@ let package = Package(
             ]),
         .testTarget(name: "BarShelfCoreTests", dependencies: ["BarShelfCore", "BarShelfCoreTestSupport"]),
         .testTarget(name: "BarShelfBackendTests", dependencies: ["BarShelfBackend", "BarShelfCoreTestSupport"]),
+        .testTarget(name: "BarShelfUIKitTests", dependencies: ["BarShelfUIKit", "BarShelfCoreTestSupport"]),
     ]
 )
