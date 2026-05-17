@@ -9,16 +9,19 @@ final class AppController: NSObject, NSApplicationDelegate {
         statusItem.button?.title = "▣"
 
         let menu = NSMenu()
-        menu.addItem(withTitle: "Spike: Check Permissions", action: #selector(checkPermissions), keyEquivalent: "")
-        menu.addItem(withTitle: "Spike: Scan Menu Bar Items", action: #selector(scanMenuBar), keyEquivalent: "")
-        menu.addItem(withTitle: "Spike: Hide First Foreign Item", action: #selector(hideFirst), keyEquivalent: "")
-        menu.addItem(withTitle: "Spike: Restore Hidden Item", action: #selector(restoreHidden), keyEquivalent: "")
-        menu.addItem(withTitle: "Spike: Full Round-Trip (restore→click→re-hide)", action: #selector(roundTrip), keyEquivalent: "")
-        menu.addItem(withTitle: "Spike: Stress x20 (hide+roundtrip loop)", action: #selector(stress), keyEquivalent: "")
+        menu.addItem(withTitle: "① 检查权限", action: #selector(checkPermissions), keyEquivalent: "")
+        menu.addItem(withTitle: "② 扫描菜单栏图标", action: #selector(scanMenuBar), keyEquivalent: "")
+        menu.addItem(withTitle: "③ 隐藏第一个外部图标", action: #selector(hideFirst), keyEquivalent: "")
+        menu.addItem(withTitle: "④ 恢复已隐藏图标", action: #selector(restoreHidden), keyEquivalent: "")
+        menu.addItem(withTitle: "⑤ 完整往返（恢复→点击→重新隐藏）", action: #selector(roundTrip), keyEquivalent: "")
+        menu.addItem(withTitle: "⑥ 压力测试 ×20（隐藏+往返循环）", action: #selector(stress), keyEquivalent: "")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        menu.addItem(withTitle: "显示日志窗口", action: #selector(showLog), keyEquivalent: "l")
+        menu.addItem(withTitle: "退出", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         statusItem.menu = menu
-        Log.line("launched. pid=\(getpid())")
+
+        LogConsole.shared.show()
+        Log.line("已启动。pid=\(getpid())。请按 ① → ⑥ 顺序操作，失败即停。")
     }
 
     @objc func checkPermissions() { Permissions.report() }
@@ -26,17 +29,18 @@ final class AppController: NSObject, NSApplicationDelegate {
     @objc func hideFirst() { RoundTrip.shared.hideFirstForeignItem() }
     @objc func restoreHidden() { RoundTrip.shared.restoreHidden() }
     @objc func roundTrip() { RoundTrip.shared.fullRoundTrip() }
+    @objc func showLog() { LogConsole.shared.show() }
 
     @objc func stress() {
         Task { @MainActor in
             for n in 1...20 {
-                Log.line("stress cycle \(n)")
+                Log.line("压力测试第 \(n) 轮")
                 RoundTrip.shared.hideFirstForeignItem()
                 try? await Task.sleep(for: .milliseconds(400))
                 RoundTrip.shared.restoreHidden()
                 try? await Task.sleep(for: .milliseconds(400))
             }
-            Log.line("stress done: 20 cycles survived")
+            Log.line("压力测试完成：20 轮全部通过")
         }
     }
 }
