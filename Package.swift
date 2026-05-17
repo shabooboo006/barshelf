@@ -6,10 +6,13 @@ let package = Package(
     platforms: [.macOS("26.0")],
     targets: [
         .target(name: "BarShelfCore"),
+        .target(name: "BarShelfCoreTestSupport", dependencies: ["BarShelfCore"]),
+        .target(name: "BarShelfBackend", dependencies: ["BarShelfCore"]),
         .executableTarget(
             name: "BarShelf",
-            dependencies: ["BarShelfCore"],
+            dependencies: ["BarShelfCore", "BarShelfBackend"],
             exclude: ["Info.plist"],
+            // unsafeFlags is acceptable here: BarShelf is a top-level executable, never consumed as a package dependency (where unsafeFlags would be rejected).
             linkerSettings: [
                 // Embed Info.plist (LSUIElement agent) into the binary's
                 // __TEXT,__info_plist section — standard macOS technique for
@@ -22,6 +25,7 @@ let package = Package(
                     "-Xlinker", "Sources/BarShelf/Info.plist",
                 ]),
             ]),
-        .testTarget(name: "BarShelfCoreTests", dependencies: ["BarShelfCore"]),
+        .testTarget(name: "BarShelfCoreTests", dependencies: ["BarShelfCore", "BarShelfCoreTestSupport"]),
+        .testTarget(name: "BarShelfBackendTests", dependencies: ["BarShelfBackend", "BarShelfCoreTestSupport"]),
     ]
 )

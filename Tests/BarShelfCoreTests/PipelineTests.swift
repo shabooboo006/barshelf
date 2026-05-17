@@ -1,5 +1,6 @@
 import XCTest
 @testable import BarShelfCore
+import BarShelfCoreTestSupport
 
 final class PipelineTests: XCTestCase {
     final class MemKV: KeyValueStore {

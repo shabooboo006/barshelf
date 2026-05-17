@@ -1,5 +1,6 @@
 import XCTest
 @testable import BarShelfCore
+import BarShelfCoreTestSupport
 
 final class MockBackendTests: XCTestCase {
     func testMockRecordsMoves() {
