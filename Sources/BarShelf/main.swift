@@ -7,8 +7,8 @@
 //   • NOT ready  → show onboarding window; block recompute pipeline.
 //   • Ready      → enterReadyMode() → start TahoeBackend + ShelfController pipeline.
 //
-// The recompute() body is UNCHANGED from 2B (TahoeBackend + ShelfController +
-// StatusItemRegistry + ActiveAppMonitor diff-based moves + setShelfHidden).
+// recompute(): TahoeBackend + ShelfController + StatusItemRegistry +
+// ActiveAppMonitor diff-based ⌘-drag moves. No spacer-collapse (rc2 fix).
 //
 // AppMenu replaces the 2B debug NSMenu.
 // SettingsScene (SwiftUI) replaces per-item debug state-setting.
@@ -173,14 +173,22 @@ final class AppController: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    // MARK: Core recompute (2B body — UNCHANGED)
+    // MARK: Core recompute
+    //
+    // Hide = ⌘-drag each 收进架 item off-screen; restore = ⌘-drag it back. There
+    // is NO spacer-collapse (the 10 000 pt spacer pushed BarShelf's own icon
+    // off-screen on real hardware — rc2 Central Risk #4). Parked items leave
+    // `live`, so `knownShelved` (ids we last placed `.shelf`) is fed back in so
+    // they still get a placement and can be restored on expand.
 
     private func recompute() {
         let items  = backend.enumerateStatusItems()
         let states = registry.reconcile(live: items, stored: store.all())
+        let knownShelved = Set(lastPlacement.filter { $0.value == .shelf }.keys)
         let want   = ShelfController.desiredVisibility(
             states: states,
             live: items,
+            knownShelved: knownShelved,
             frontmost: activeApp.frontmostBundleID,
             expanded: expanded
         )
@@ -188,7 +196,6 @@ final class AppController: NSObject, NSApplicationDelegate {
         for (id, placement) in diff {
             backend.move(id, to: placement)
         }
-        backend.setShelfHidden(!expanded)
         lastPlacement = want
     }
 }
