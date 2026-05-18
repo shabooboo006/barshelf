@@ -33,6 +33,7 @@ final class AppController: NSObject, NSApplicationDelegate {
     // MARK: Integration additions (T7)
 
     private let probe  = LivePermissionsProbe()
+    private let requester = LivePermissionRequester()
     private let launch = LaunchAtLoginController(service: SMAppServiceLoginItem())
     private let appMenu = AppMenu()
 
@@ -65,6 +66,7 @@ final class AppController: NSObject, NSApplicationDelegate {
             // Show onboarding; do NOT start the recompute pipeline
             let win = makeOnboardingWindow(
                 probe: probe,
+                requester: requester,
                 onRecheck: { [weak self] in self?.reevaluateGate() },
                 onContinue: { [weak self] in self?.enterReadyMode() }
             )

@@ -13,6 +13,7 @@ import BarShelfUIKit
 
 struct OnboardingView: View {
     let probe: PermissionsProbe
+    let requester: PermissionRequester
     let onRecheck: @MainActor () -> Void
     let onContinue: @MainActor () -> Void
 
@@ -34,11 +35,15 @@ struct OnboardingView: View {
                 PermissionCard(
                     title: "辅助功能",
                     isGranted: probe.axTrusted,
+                    kind: .accessibility,
+                    requester: requester,
                     settingsURL: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
                 )
                 PermissionCard(
                     title: "屏幕录制",
                     isGranted: probe.screenGranted,
+                    kind: .screenRecording,
+                    requester: requester,
                     settingsURL: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"
                 )
             }
@@ -84,6 +89,8 @@ struct OnboardingView: View {
 private struct PermissionCard: View {
     let title: String
     let isGranted: Bool
+    let kind: PermissionKind
+    let requester: PermissionRequester
     let settingsURL: String
 
     var body: some View {
@@ -97,8 +104,14 @@ private struct PermissionCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Button("打开系统设置") {
-                guard let url = URL(string: settingsURL) else { return }
-                NSWorkspace.shared.open(url)
+                // Request the OS permission FIRST so macOS registers BarShelf with
+                // TCC (creating the toggle row), THEN deep-link to the now-populated
+                // pane. Opening the pane alone never registers the app — the rc1 bug.
+                OnboardingCardAction(kind: kind, settingsURL: settingsURL)
+                    .perform(requester: requester) { urlString in
+                        guard let url = URL(string: urlString) else { return }
+                        NSWorkspace.shared.open(url)
+                    }
             }
             .buttonStyle(.bordered)
         }
@@ -119,11 +132,13 @@ private struct PermissionCard: View {
 @MainActor
 func makeOnboardingWindow(
     probe: PermissionsProbe,
+    requester: PermissionRequester,
     onRecheck: @escaping @MainActor () -> Void,
     onContinue: @escaping @MainActor () -> Void
 ) -> NSWindow {
     let contentView = OnboardingView(
         probe: probe,
+        requester: requester,
         onRecheck: onRecheck,
         onContinue: onContinue
     )

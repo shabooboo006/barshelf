@@ -28,7 +28,22 @@ func requestAccessibilityPrompt() {
     _ = AXIsProcessTrustedWithOptions(options)
 }
 
-/// Requests Screen Recording access (shows the TCC prompt the first time).
+/// Requests Screen Recording access (shows the TCC prompt the first time AND
+/// registers BarShelf in the Screen & System Audio Recording pane — preflight
+/// alone never registers the app, which was the rc1 onboarding deadlock).
 func requestScreenRecording() {
     CGRequestScreenCaptureAccess()
+}
+
+// MARK: - LivePermissionRequester
+
+/// Live `PermissionRequester`: wires the onboarding cards to the real OS request
+/// APIs. Lives in the exe target (never unit-tested), mirroring `LivePermissionsProbe`.
+struct LivePermissionRequester: PermissionRequester {
+    func request(_ kind: PermissionKind) {
+        switch kind {
+        case .accessibility:   requestAccessibilityPrompt()
+        case .screenRecording: requestScreenRecording()
+        }
+    }
 }
